@@ -42,6 +42,9 @@ import userRouter from "./routes/user.route.js";
 import interviewRouter from "./routes/interview.route.js";
 
 const app = express();
+app.get("/", (req, res) => {
+  res.send("API is running successfully");
+});
 
 // CORS
 app.use(cors({

@@ -153,7 +153,13 @@ Return strictly JSON:
 
     const aiResponse = await askAi(messages);
 
-    const parsed = JSON.parse(aiResponse);
+    // const parsed = JSON.parse(aiResponse);
+    let parsed;
+try {
+  parsed = JSON.parse(aiResponse);
+} catch {
+  return res.status(500).json({ message: "AI JSON error" });
+}
 
     fs.unlinkSync(filepath);
 

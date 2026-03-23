@@ -52,10 +52,20 @@ app.get("/", (req, res) => {
 //     credentials: true
 // }));
 
+// app.use(cors({
+//     origin: "https://ai-interview-frontend-d4lf.vercel.app",
+//     credentials: true
+// }));
+const allowedOrigins = [
+  "https://ai-interview-frontend-d4lf.vercel.app",
+  "http://localhost:5173"
+];
+
 app.use(cors({
-    origin: true,
-    credentials: true
+  origin: allowedOrigins,
+  credentials: true
 }));
+
 
 // Middlewares
 app.use(express.json());

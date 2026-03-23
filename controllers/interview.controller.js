@@ -153,27 +153,61 @@ Return strictly JSON:
 
     const aiResponse = await askAi(messages);
 
-    // const parsed = JSON.parse(aiResponse);
     let parsed;
-try {
-  parsed = JSON.parse(aiResponse);
-} catch {
-  return res.status(500).json({ message: "AI JSON error" });
-}
+    let parseError;
+
+    try {
+      parsed = JSON.parse(aiResponse);
+    } catch (e1) {
+      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        try {
+          parsed = JSON.parse(jsonMatch[0]);
+        } catch (e2) {
+          parseError = e2;
+        }
+      } else {
+        parseError = e1;
+      }
+    }
+
+    if (!parsed || typeof parsed !== "object") {
+      console.warn("analyzeResume: AI response could not be parsed to JSON, returning fallback model", {
+        error: parseError?.message,
+        aiResponse
+      });
+
+      fs.unlinkSync(filepath);
+
+      return res.json({
+        name: "",
+        email: "",
+        phone: "",
+        role: "",
+        experience: "",
+        education: [],
+        skills: [],
+        technologies: [],
+        projects: [],
+        summary: "",
+        resumeText,
+        aiRaw: aiResponse
+      });
+    }
 
     fs.unlinkSync(filepath);
 
     res.json({
-      name: parsed.name,
-      email: parsed.email,
-      phone: parsed.phone,
-      role: parsed.role,
-      experience: parsed.experience,
-      education: parsed.education,
-      skills: parsed.skills,
-      technologies: parsed.technologies,
-      projects: parsed.projects,
-      summary: parsed.summary,
+      name: parsed.name || "",
+      email: parsed.email || "",
+      phone: parsed.phone || "",
+      role: parsed.role || "",
+      experience: parsed.experience || "",
+      education: Array.isArray(parsed.education) ? parsed.education : [],
+      skills: Array.isArray(parsed.skills) ? parsed.skills : [],
+      technologies: Array.isArray(parsed.technologies) ? parsed.technologies : [],
+      projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+      summary: parsed.summary || "",
       resumeText
     });
 

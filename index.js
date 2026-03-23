@@ -56,13 +56,31 @@ app.get("/", (req, res) => {
 //     origin: "https://ai-interview-frontend-d4lf.vercel.app",
 //     credentials: true
 // }));
+// const allowedOrigins = [
+//   "https://ai-interview-frontend-d4lf.vercel.app",
+//   "http://localhost:5173"
+// ];
+
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true
+// }));
+
+
 const allowedOrigins = [
   "https://ai-interview-frontend-d4lf.vercel.app",
+  "https://ai-interview-frontend-d4lf-mqo6v0rcf.vercel.app",
   "http://localhost:5173"
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
 

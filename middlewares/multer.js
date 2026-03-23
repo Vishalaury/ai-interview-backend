@@ -1,17 +1,35 @@
-import multer from "multer"
+// import multer from "multer"
+
+// const storage = multer.diskStorage({
+//     destination: function(req, file, cb){
+//         cb(null, "public")
+//     },
+//     filename: function(req, file, cb){
+//         const filename = Date.now() + "-" + file.originalname;
+//         cb(null, filename)
+
+//     }
+// })
+
+// export const upload = multer({
+//     storage,
+//     limits: {fileSize: 5 * 1024 * 1024}, //5mb limit
+// });
+
+
+import multer from "multer";
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb){
-        cb(null, "public")
+    destination: function (req, file, cb) {
+        cb(null, "/tmp"); // ✅ FIX (Render safe folder)
     },
-    filename: function(req, file, cb){
+    filename: function (req, file, cb) {
         const filename = Date.now() + "-" + file.originalname;
-        cb(null, filename)
-
+        cb(null, filename);
     }
-})
+});
 
 export const upload = multer({
     storage,
-    limits: {fileSize: 5 * 1024 * 1024}, //5mb limit
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5mb
 });
